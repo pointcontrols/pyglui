@@ -612,30 +612,26 @@ cdef class Sphere:
         glDeleteBuffers(1,&self.index_buffer_id)
         glDeleteBuffers(1,&self.vertex_buffer_id)
 
-
 cdef class Named_Texture:
     ### OpenGL funtions for creating, updating and drawing a texture.
     ### Using a Frame object to update.
     #cdef GLuint texture_id
     #cdef bint use_yuv_shader
-    class Subsampling(Enum):
-        yuv_422 = 0
-        yuv_420 = 1
+
 
     def __cinit__(self):
         pass
     def __init__(self):
         self.texture_id = create_named_texture()
-        self.use_yuv_shader = False
-        self.subsampling = self.Subsampling.yuv_422
+        self.subsampling = yuv_422
 
     def update_from_ndarray(self,img):
         update_named_texture(self.texture_id,img)
         self.use_yuv_shader = False
 
-    def update_from_yuv_buffer(self,yuv_buffer,width,height, ss=Subsampling.yuv_422):
+    def update_from_yuv_buffer(self,yuv_buffer,width,height, ss=yuv_422):
         self.subsampling = ss
-        if ss == self.Subsampling.yuv_422:
+        if ss == yuv_422:
             update_named_texture_yuv422(self.texture_id,yuv_buffer,width,height)
         else:
             update_named_texture_yuv420(self.texture_id,yuv_buffer,width,height)
@@ -643,7 +639,7 @@ cdef class Named_Texture:
 
     def draw(self,interpolation=True, quad=((0.,0.),(1.,0.),(1.,1.),(0.,1.)),alpha=1.0):
         if self.use_yuv_shader:
-            if self.subsampling == self.Subsampling.yuv_422:
+            if self.subsampling == yuv_422:
                 draw_named_texture_yuv422(self.texture_id,interpolation,quad,alpha)
             else:
                 draw_named_texture_yuv420(self.texture_id,interpolation,quad,alpha)

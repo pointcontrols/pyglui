@@ -26,12 +26,18 @@ ctypedef struct fbo_tex_id:
     GLuint fbo_id
     GLuint tex_id
 
+cpdef enum yuv_subsamp:
+    yuv_422 = 0
+    yuv_420 = 1
+
+
 cdef class Render_Target:
     cdef fbo_tex_id fbo_tex
 
 cdef class Named_Texture:
     cdef GLuint texture_id
     cdef bint use_yuv_shader
+    cdef yuv_subsamp subsampling
 
 cdef class Sphere:
     cdef GLuint vertex_buffer_id
